@@ -1,0 +1,7 @@
+indicador,valor,unidade
+MAE do modelo de preço,10.581371707623452,R$/60 kg
+RMSE do modelo de preço,12.348997861457216,R$/60 kg
+R² no teste,0.756805772521438,R²
+Acurácia direcional,69.44444444444444,%
+Acurácia balanceada,66.19047619047619,%
+Acurácia do baseline,41.66666666666667,%

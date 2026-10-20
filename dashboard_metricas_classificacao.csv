@@ -1,0 +1,4 @@
+cultura,total_casos,verdadeiro_positivo,verdadeiro_negativo,falso_positivo,falso_negativo,acuracia_percentual,sensibilidade_percentual,especificidade_percentual,taxa_falso_positivo_percentual,taxa_falso_negativo_percentual
+Trigo,72,16,34,8,14,69.44444444444444,53.333333333333336,80.95238095238095,19.047619047619047,46.666666666666664
+Milho,72,17,30,10,15,65.27777777777779,53.125,75,25,46.875
+Soja,72,20,18,21,13,52.77777777777778,60.60606060606061,46.15384615384615,53.84615384615385,39.39393939393939

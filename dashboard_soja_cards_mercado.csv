@@ -1,0 +1,7 @@
+indicador,valor,unidade
+Preço DERAL em dez/2024,130.1091,R$/60 kg
+CBOT em dez/2024,9.85125,US$/bushel
+Dólar médio em dez/2024,6.097028571428572,R$/US$
+CBOT convertida em dez/2024,132.41702613799637,R$/60 kg - referência sem prêmio
+Correlação mensal DERAL x CBOT,0.5447,correlação de Pearson
+Correlação mensal DERAL x dólar,0.2196,correlação de Pearson

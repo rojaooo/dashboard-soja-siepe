@@ -1,0 +1,13 @@
+comparacao,tipo_serie,metodo,n,correlacao,p_valor
+DERAL x CBOT,Níveis,Pearson,216,0.4352,0
+DERAL x CBOT,Níveis,Spearman,216,0.2626,9.4e-5
+DERAL x dólar,Níveis,Pearson,216,0.8883,0
+DERAL x dólar,Níveis,Spearman,216,0.9091,0
+DERAL x CBOT convertida,Níveis,Pearson,216,0.9877,0
+DERAL x CBOT convertida,Níveis,Spearman,216,0.9828,0
+Variação DERAL x variação CBOT,Variações mensais,Pearson,215,0.5447,0
+Variação DERAL x variação CBOT,Variações mensais,Spearman,215,0.5055,0
+Variação DERAL x variação dólar,Variações mensais,Pearson,215,0.2196,0.00119
+Variação DERAL x variação dólar,Variações mensais,Spearman,215,0.2286,7.33e-4
+Variação DERAL x variação CBOT convertida,Variações mensais,Pearson,215,0.7296,0
+Variação DERAL x variação CBOT convertida,Variações mensais,Spearman,215,0.7418,0

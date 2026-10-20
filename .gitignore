@@ -1,0 +1,6 @@
+__MACOSX/
+__pycache__/
+*.pyc
+.DS_Store
+*.html
+*.pdf

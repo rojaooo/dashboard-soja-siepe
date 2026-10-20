@@ -1,0 +1,13 @@
+grupo,metrica,valor
+Modelo de preço,MAE,10.581371707623452
+Modelo de preço,RMSE,12.348997861457216
+Modelo de preço,MAPE (%),8.093007526796747
+Modelo de preço,R² treino,0.9766903779377595
+Modelo de preço,R² teste,0.756805772521438
+Modelo direcional,Acurácia (%),69.44444444444444
+Modelo direcional,Sensibilidade (%),46.666666666666664
+Modelo direcional,Especificidade (%),85.71428571428571
+Modelo direcional,Acurácia balanceada (%),66.19047619047619
+Modelo direcional,Baseline (%),41.66666666666667
+Modelo direcional,Ganho sobre baseline (p.p.),27.77777777777777
+Modelo direcional,Corte usado,0.67

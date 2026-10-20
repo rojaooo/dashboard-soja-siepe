@@ -1,0 +1,16 @@
+cultura,metrica,valor_percentual
+Trigo,Acurácia,69.44444444444444
+Trigo,Sensibilidade,53.333333333333336
+Trigo,Especificidade,80.95238095238095
+Trigo,Falso positivo,19.047619047619047
+Trigo,Falso negativo,46.666666666666664
+Milho,Acurácia,65.27777777777779
+Milho,Sensibilidade,53.125
+Milho,Especificidade,75
+Milho,Falso positivo,25
+Milho,Falso negativo,46.875
+Soja,Acurácia,52.77777777777778
+Soja,Sensibilidade,60.60606060606061
+Soja,Especificidade,46.15384615384615
+Soja,Falso positivo,53.84615384615385
+Soja,Falso negativo,39.39393939393939
