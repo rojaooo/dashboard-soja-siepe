@@ -109,6 +109,19 @@ st.markdown(
         background-color: #f8fafc;
         border-right: 1px solid #e2e8f0;
     }
+    /* Oculta barra superior do GitHub, rodapé padrão e badges de criador do Streamlit */
+    #MainMenu {visibility: hidden !important;}
+    footer {visibility: hidden !important; display: none !important;}
+    [data-testid="stToolbar"] {visibility: hidden !important; display: none !important;}
+    [data-testid="stDecoration"] {visibility: hidden !important; display: none !important;}
+    [data-testid="stStatusWidget"] {visibility: hidden !important; display: none !important;}
+    .viewerBadge_container__1QSob,
+    .viewerBadge_link__1S137,
+    .styles_viewerBadge__CvC9N,
+    [class^="viewerBadge_"] {
+        display: none !important;
+        visibility: hidden !important;
+    }
     </style>
     """,
     unsafe_allow_html=True,
