@@ -115,12 +115,21 @@ st.markdown(
     [data-testid="stToolbar"] {visibility: hidden !important; display: none !important;}
     [data-testid="stDecoration"] {visibility: hidden !important; display: none !important;}
     [data-testid="stStatusWidget"] {visibility: hidden !important; display: none !important;}
+    [data-testid="manage-app-button"] {visibility: hidden !important; display: none !important;}
+    a[href*="streamlit.io/cloud"] {visibility: hidden !important; display: none !important;}
+    div[class*=" profileContainer"],
+    div[class*="_profileContainer_"],
+    div[class*="_profilePreview_"],
+    div[class*="_container_gzau3_"],
+    div[class*="_viewerBadge_"],
     .viewerBadge_container__1QSob,
     .viewerBadge_link__1S137,
     .styles_viewerBadge__CvC9N,
     [class^="viewerBadge_"] {
         display: none !important;
         visibility: hidden !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
     }
     </style>
     """,
