@@ -780,8 +780,18 @@ elif pagina_atual == "4. Câmbio e Mercado Internacional (CBOT)":
         )
         fig.update_traces(textposition="outside")
         fig.update_yaxes(range=[0, 1.15])
-        fig.update_layout(title="Contraste de Correlações da Soja: Níveis Mensais vs. Variações Mensais")
-        st.plotly_chart(apply_plotly_style(fig, height=580), width="stretch")
+        fig.update_layout(
+            template="plotly_white",
+            paper_bgcolor="#ffffff",
+            plot_bgcolor="#ffffff",
+            font=dict(color="#0f172a", size=14),
+            title="Contraste de Correlações da Soja: Níveis Mensais vs. Variações Mensais",
+            height=600,
+            margin=dict(t=95, l=85, r=85, b=95),
+            legend=dict(orientation="h", yanchor="top", y=-0.15, xanchor="center", x=0.5),
+        )
+        fig.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1], font=dict(size=14, color="#0f172a")))
+        st.plotly_chart(fig, width="stretch")
 
     elif op_cbot == "📈 Comparativo em Índice Base 100 (Jan/2007 = 100)":
         fig = go.Figure()
