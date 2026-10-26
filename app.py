@@ -788,31 +788,48 @@ elif pagina_atual == "4. Câmbio e Mercado Internacional (CBOT)":
     df_soja_m = filtrar_df(DATA["soja_mercado_mensal"]).sort_values("data")
 
     if op_cbot == "📊 Correlações de Pearson e Spearman (Níveis vs. Variações Mensais)":
-        df_scorr = DATA["soja_correlacoes"]
+        df_scorr = DATA["soja_correlacoes"].copy()
+        # Padroniza os nomes dos 3 pares de variáveis para que os dois painéis compartilhem o mesmo eixo X sem espaços vazios
+        mapa_pares = {
+            "DERAL x CBOT": "DERAL x CBOT (US$)",
+            "Variação DERAL x variação CBOT": "DERAL x CBOT (US$)",
+            "DERAL x dólar": "DERAL x Dólar (R$/US$)",
+            "Variação DERAL x variação dólar": "DERAL x Dólar (R$/US$)",
+            "DERAL x CBOT convertida": "DERAL x CBOT Convertida (R$)",
+            "Variação DERAL x variação CBOT convertida": "DERAL x CBOT Convertida (R$)",
+        }
+        df_scorr["par_limpo"] = df_scorr["comparacao"].map(lambda x: mapa_pares.get(x, x))
+
         fig = px.bar(
             df_scorr,
-            x="comparacao",
+            x="par_limpo",
             y="correlacao",
             color="metodo",
             facet_col="tipo_serie",
             barmode="group",
             text=df_scorr["correlacao"].apply(lambda v: fmt_num(v, 3)),
             color_discrete_sequence=[COLORS["Soja"], COLORS["CEPEA"]],
-            labels={"comparacao": "Par de Variáveis Analisado", "correlacao": "Coeficiente de Correlação", "metodo": "Método"},
+            labels={"par_limpo": "Par de Variáveis Analisado", "correlacao": "Coeficiente de Correlação", "metodo": "Método"},
         )
-        fig.update_traces(textposition="outside")
-        fig.update_yaxes(range=[0, 1.15])
+        fig.update_traces(textposition="outside", cliponaxis=False)
+        fig.update_xaxes(matches=None, tickangle=0, title_font=dict(size=14, color="#0f172a"), tickfont=dict(size=13, color="#0f172a"))
+        fig.update_yaxes(range=[0, 1.15], showgrid=True, gridcolor="#e2e8f0")
         fig.update_layout(
             template="plotly_white",
             paper_bgcolor="#ffffff",
             plot_bgcolor="#ffffff",
             font=dict(color="#0f172a", size=14),
-            title="Contraste de Correlações da Soja: Níveis Mensais vs. Variações Mensais",
+            title=dict(
+                text="Contraste de Correlações da Soja: Níveis Mensais vs. Variações Mensais",
+                font=dict(color="#0f172a", size=19, weight="bold"),
+                x=0.0,
+                y=0.96,
+            ),
             height=600,
-            margin=dict(t=95, l=85, r=85, b=95),
-            legend=dict(orientation="h", yanchor="top", y=-0.15, xanchor="center", x=0.5),
+            margin=dict(t=95, l=85, r=85, b=120),
+            legend=dict(orientation="h", yanchor="top", y=-0.20, xanchor="center", x=0.5, font=dict(size=14, color="#0f172a")),
         )
-        fig.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1], font=dict(size=14, color="#0f172a")))
+        fig.for_each_annotation(lambda a: a.update(text=f"<b>{a.text.split('=')[-1]}</b>", font=dict(size=15, color="#0f172a")))
         st.plotly_chart(fig, width="stretch")
 
     elif op_cbot == "📈 Comparativo em Índice Base 100 (Jan/2007 = 100)":
