@@ -421,136 +421,89 @@ elif pagina_atual == "2. Modelagem Preditiva (2022–2024)":
         render_kpi("Acurácia Balanceada", "66,19%", "Especificidade: 85,71% | Sensibilidade: 46,67%")
 
     st.write("")
-    op_mod = st.segmented_control(
-        "Selecione o resultado do modelo para apresentar em tela cheia:",
-        options=[
-            "📈 1. Modelo de Preço — Figura 1 (Observado vs. Estimado)",
-            "🎯 2. Modelo Direcional Logístico — Probabilidades Mensais (Corte 0,67)",
-            "📊 3. Desempenho Direcional vs. Baseline e Matriz de Confusão",
-        ],
-        default="📈 1. Modelo de Preço — Figura 1 (Observado vs. Estimado)",
-    )
-
     df_sp_teste = DATA["soja_modelo_preco_teste"].sort_values("data")
-    df_sdir = DATA["soja_modelo_dir_teste"].sort_values("data")
 
-    if op_mod == "📈 1. Modelo de Preço — Figura 1 (Observado vs. Estimado)":
-        fig = go.Figure()
-        fig.add_trace(
-            go.Scatter(
-                x=df_sp_teste["data"],
-                y=df_sp_teste["preco_estimado_modelo"],
-                mode="lines+markers",
-                name="Preço estimado pelo modelo (baseado na CBOT em R$)",
-                line=dict(color=COLORS["Modelo"], width=3.5),
-                marker=dict(size=9),
-            )
+    # 1. Modelo de Preço — Figura 1 (Observado vs. Estimado)
+    fig = go.Figure()
+    fig.add_trace(
+        go.Scatter(
+            x=df_sp_teste["data"],
+            y=df_sp_teste["preco_estimado_modelo"],
+            mode="lines+markers",
+            name="Preço estimado pelo modelo (baseado na CBOT em R$)",
+            line=dict(color=COLORS["Modelo"], width=3.5),
+            marker=dict(size=9),
         )
-        fig.add_trace(
-            go.Scatter(
-                x=df_sp_teste["data"],
-                y=df_sp_teste["preco_deral_nominal"],
-                mode="lines+markers",
-                name="Preço observado DERAL",
-                line=dict(color=COLORS["Observado_Teste"], width=3.5),
-                marker=dict(size=9),
-            )
+    )
+    fig.add_trace(
+        go.Scatter(
+            x=df_sp_teste["data"],
+            y=df_sp_teste["preco_deral_nominal"],
+            mode="lines+markers",
+            name="Preço observado DERAL",
+            line=dict(color=COLORS["Observado_Teste"], width=3.5),
+            marker=dict(size=9),
         )
-        fig.update_layout(
-            title="Figura 1 — Preço Observado da Soja no DERAL vs. Preço Estimado pelo Modelo no Período de Teste (2022–2024)",
-            xaxis_title="Mês/Ano (Período de Teste Independente: 2022–2024)",
-            yaxis_title="Preço da soja (R$/60 kg)",
-        )
-        st.plotly_chart(apply_plotly_style(fig, height=580), width="stretch")
+    )
+    fig.update_layout(
+        title="Figura 1 — Preço Observado da Soja no DERAL vs. Preço Estimado pelo Modelo no Período de Teste (2022–2024)",
+        xaxis_title="Mês/Ano (Período de Teste Independente: 2022–2024)",
+        yaxis_title="Preço da soja (R$/60 kg)",
+    )
+    st.plotly_chart(apply_plotly_style(fig, height=560), width="stretch")
 
-    elif op_mod == "🎯 2. Modelo Direcional Logístico — Probabilidades Mensais (Corte 0,67)":
-        fig = go.Figure()
-        fig.add_trace(
-            go.Scatter(
-                x=df_sdir["data"],
-                y=df_sdir["probabilidade_alta"],
-                mode="lines+markers",
-                name="Probabilidade Estimada de Alta (Preditores: Var. t-1 CBOT, Dólar e DERAL)",
-                line=dict(color="#334155", width=2.8),
-                marker=dict(
-                    size=12,
-                    color=[
-                        "#16a34a" if o == p else "#dc2626"
-                        for o, p in zip(df_sdir["classe_observada_texto"], df_sdir["classe_prevista_texto"])
-                    ],
-                    line=dict(width=1.5, color="#ffffff"),
-                ),
-                text=[
-                    f"Observado: {o} | Previsto: {p}"
-                    for o, p in zip(df_sdir["classe_observada_texto"], df_sdir["classe_prevista_texto"])
-                ],
+    st.divider()
+
+    # 2. Desempenho Direcional vs. Baseline e Matriz de Confusão
+    col_m1, col_m2 = st.columns([1.25, 1])
+    with col_m1:
+        metricas_nomes = [
+            "Baseline (Classe Majoritária)",
+            "Acurácia do Modelo",
+            "Acurácia Balanceada",
+            "Especificidade (Não Alta)",
+            "Sensibilidade (Alta)",
+        ]
+        metricas_vals = [41.67, 69.44, 66.19, 85.71, 46.67]
+        cores_barras = ["#94a3b8", "#15803d", "#0d9488", "#1d4ed8", "#d97706"]
+
+        fig_b = go.Figure()
+        fig_b.add_trace(
+            go.Bar(
+                x=metricas_nomes,
+                y=metricas_vals,
+                marker_color=cores_barras,
+                text=[fmt_pct(v) for v in metricas_vals],
+                textposition="outside",
             )
         )
-        fig.add_hline(
-            y=0.67,
-            line_dash="dash",
-            line_color="#d97706",
-            line_width=2.5,
-            annotation_text="Corte de probabilidade selecionado na validação (2019–2021) = 0,67",
-            annotation_position="top left",
+        fig_b.update_layout(
+            title="Métricas do Modelo Direcional vs. Baseline (Teste 2022–2024)",
+            yaxis=dict(title="Percentual (%)", range=[0, 100]),
+            xaxis_title="Métrica",
         )
-        fig.update_layout(
-            title="Probabilidade Mensal de Alta no Teste (2022–2024) — Ponto Verde = Acerto (25/36) | Ponto Vermelho = Erro (11/36)",
-            xaxis_title="Data (Período de Teste: 2022–2024)",
-            yaxis=dict(title="Probabilidade Estimada de Alta", range=[0.15, 0.95]),
+        st.plotly_chart(apply_plotly_style(fig_b, height=540), width="stretch")
+
+    with col_m2:
+        df_smc = DATA["soja_matriz_conf"]
+        pivot_mc = df_smc.pivot(index="observado", columns="previsto", values="quantidade").fillna(0)
+        fig_mc = px.imshow(
+            pivot_mc,
+            text_auto=True,
+            color_continuous_scale="Greens",
+            labels=dict(x="Previsto pelo Modelo", y="Observado no DERAL", color="Meses"),
+            title="Matriz de Confusão (2022–2024, n = 36 meses)",
         )
-        st.plotly_chart(apply_plotly_style(fig, height=580), width="stretch")
-
-    else:
-        col_m1, col_m2 = st.columns([1.25, 1])
-        with col_m1:
-            metricas_nomes = [
-                "Baseline (Classe Majoritária)",
-                "Acurácia do Modelo",
-                "Acurácia Balanceada",
-                "Especificidade (Não Alta)",
-                "Sensibilidade (Alta)",
-            ]
-            metricas_vals = [41.67, 69.44, 66.19, 85.71, 46.67]
-            cores_barras = ["#94a3b8", "#15803d", "#0d9488", "#1d4ed8", "#d97706"]
-
-            fig_b = go.Figure()
-            fig_b.add_trace(
-                go.Bar(
-                    x=metricas_nomes,
-                    y=metricas_vals,
-                    marker_color=cores_barras,
-                    text=[fmt_pct(v) for v in metricas_vals],
-                    textposition="outside",
-                )
-            )
-            fig_b.update_layout(
-                title="Métricas do Modelo Direcional vs. Baseline (Teste 2022–2024)",
-                yaxis=dict(title="Percentual (%)", range=[0, 100]),
-                xaxis_title="Métrica",
-            )
-            st.plotly_chart(apply_plotly_style(fig_b, height=540), width="stretch")
-
-        with col_m2:
-            df_smc = DATA["soja_matriz_conf"]
-            pivot_mc = df_smc.pivot(index="observado", columns="previsto", values="quantidade").fillna(0)
-            fig_mc = px.imshow(
-                pivot_mc,
-                text_auto=True,
-                color_continuous_scale="Greens",
-                labels=dict(x="Previsto pelo Modelo", y="Observado no DERAL", color="Meses"),
-                title="Matriz de Confusão (2022–2024, n = 36 meses)",
-            )
-            fig_mc.update_traces(textfont=dict(size=20))
-            fig_mc.update_layout(
-                template="plotly_white",
-                paper_bgcolor="#ffffff",
-                plot_bgcolor="#ffffff",
-                font=dict(color="#0f172a", size=14),
-                height=540,
-                margin=dict(t=60, l=50, r=40, b=50),
-            )
-            st.plotly_chart(fig_mc, width="stretch")
+        fig_mc.update_traces(textfont=dict(size=20))
+        fig_mc.update_layout(
+            template="plotly_white",
+            paper_bgcolor="#ffffff",
+            plot_bgcolor="#ffffff",
+            font=dict(color="#0f172a", size=14),
+            height=540,
+            margin=dict(t=60, l=50, r=40, b=50),
+        )
+        st.plotly_chart(fig_mc, width="stretch")
 
 
 # ==============================================================================
