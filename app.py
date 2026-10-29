@@ -409,16 +409,16 @@ if pagina_atual == "1. Visão Geral e Evolução":
 # PÁGINA 2: MODELAGEM PREDITIVA DA SOJA (TESTE 2022–2024) — LIMPA E VISUAL
 # ==============================================================================
 elif pagina_atual == "2. Modelagem Preditiva (2022–2024)":
-    # 4 cards essenciais e diretos ao ponto para explicar em < 3 minutos
+    # Caixinhas do 1º Modelo (Modelo de Regressão de Preço)
     k1, k2, k3, k4 = st.columns(4)
     with k1:
-        render_kpi("R² Modelo de Preço", "0,757", "Treino: 2007–2021 | Teste: 2022–2024")
+        render_kpi("R² no Teste (Preço)", "0,757", "Treino (2007–2021): 0,977")
     with k2:
-        render_kpi("Erro do Modelo de Preço", "MAPE: 8,09%", "MAE: R$ 10,58 | RMSE: R$ 12,35 / 60 kg")
+        render_kpi("MAPE (Erro Percentual)", "8,09%", "Teste 2022–2024 (36 meses)")
     with k3:
-        render_kpi("Acurácia Direcional", "69,44%", "Ganho de +27,78 p.p. sobre o baseline (41,67%)")
+        render_kpi("MAE (Erro Médio Absoluto)", "R$ 10,58 / 60 kg", "Erro médio por saca no teste")
     with k4:
-        render_kpi("Acurácia Balanceada", "66,19%", "Especificidade: 85,71% | Sensibilidade: 46,67%")
+        render_kpi("RMSE (Erro Quadrático)", "R$ 12,35 / 60 kg", "Raiz do erro quadrático médio")
 
     st.write("")
     df_sp_teste = DATA["soja_modelo_preco_teste"].sort_values("data")
@@ -453,6 +453,21 @@ elif pagina_atual == "2. Modelagem Preditiva (2022–2024)":
     st.plotly_chart(apply_plotly_style(fig, height=560), width="stretch")
 
     st.divider()
+
+    # Caixinhas do 2º Modelo (Modelo Direcional Logístico)
+    d1, d2, d3, d4, d5 = st.columns(5)
+    with d1:
+        render_kpi("Acurácia Direcional", "69,44%", "Ganho de +27,78 p.p. s/ baseline")
+    with d2:
+        render_kpi("Baseline Majoritário", "41,67%", "Corte validado (2019–2021) = 0,67")
+    with d3:
+        render_kpi("Acurácia Balanceada", "66,19%", "Média entre sensib. e especif.")
+    with d4:
+        render_kpi("Especificidade (Não Alta)", "85,71%", "Acerto nos meses sem alta")
+    with d5:
+        render_kpi("Sensibilidade (Alta)", "46,67%", "Acerto nos meses de alta")
+
+    st.write("")
 
     # 2. Desempenho Direcional vs. Baseline e Matriz de Confusão
     col_m1, col_m2 = st.columns([1.25, 1])
