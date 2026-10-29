@@ -290,7 +290,7 @@ with st.sidebar:
 
     st.divider()
     st.caption(
-        "**Parceria Agrária × Unicentro × Big Data**\n\n"
+        "**Desafio Big Data para o Agronegócio**\n\n"
         "Fontes: DERAL/PR · CEPEA/ESALQ · IPCA/IBGE · BCB · USDA/ERS (CBOT)"
     )
 
@@ -495,7 +495,7 @@ elif pagina_atual == "2. Modelagem Preditiva (2022–2024)":
 st.markdown(
     """
     <div class="footer-box">
-        <strong>Parceria Agrária × Unicentro × Big Data</strong> •
+        <strong>Desafio Big Data para o Agronegócio</strong> •
         Fontes: DERAL/SEAB-PR · CEPEA/ESALQ · IPCA/IBGE · Banco Central do Brasil (BCB) · USDA/ERS (CBOT)
     </div>
     """,
