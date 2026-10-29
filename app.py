@@ -380,11 +380,10 @@ if pagina_atual == "1. Visão Geral e Evolução":
     fig.add_trace(
         go.Scatter(
             x=df_soja_m["data"],
-            y=df_soja_m["cbot_usd_60kg"],
+            y=df_soja_m["cbot_brl_60kg_sem_premio"],
             mode="lines",
-            name="Cotação Futuros CBOT (US$/60 kg)",
-            yaxis="y2",
-            line=dict(color=COLORS["CBOT"], width=2.4, dash="dash"),
+            name="Cotação CBOT Convertida (R$/60 kg)",
+            line=dict(color=COLORS["CBOT"], width=2.5, dash="dash"),
         )
     )
     fig.add_trace(
@@ -398,10 +397,10 @@ if pagina_atual == "1. Visão Geral e Evolução":
         )
     )
     fig.update_layout(
-        title="Evolução Mensal do Preço Real da Soja (DERAL) vs. Taxa de Câmbio (BCB) e Cotação CBOT (US$/60 kg)",
+        title="Evolução Mensal do Preço da Soja (DERAL e CBOT em R$/60 kg) vs. Taxa de Câmbio (BCB)",
         xaxis_title="Data",
-        yaxis=dict(title="Preço Real da Soja (R$/60 kg)"),
-        yaxis2=dict(title="Taxa de Câmbio (R$/US$) e CBOT (US$/60 kg)", overlaying="y", side="right", showgrid=False),
+        yaxis=dict(title="Preço da Soja — DERAL e CBOT (R$/60 kg)"),
+        yaxis2=dict(title="Taxa de Câmbio (R$/US$)", overlaying="y", side="right", showgrid=False),
     )
     st.plotly_chart(apply_plotly_style(fig, height=580), width="stretch")
 
