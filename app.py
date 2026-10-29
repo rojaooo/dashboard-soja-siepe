@@ -270,12 +270,10 @@ def apply_plotly_style(fig: go.Figure, height: int = 600) -> go.Figure:
 
 
 # ==============================================================================
-# NAVEGAÇÃO LATERAL ESQUERDA (PÁGINAS SELECIONÁVEIS + FILTRO DE PERÍODO)
+# NAVEGAÇÃO LATERAL ESQUERDA (PÁGINAS SELECIONÁVEIS)
 # ==============================================================================
 DATA = load_all_data()
 df_serie = DATA["serie_mensal"]
-anos_disponiveis = sorted(df_serie["ano"].unique().tolist())
-ano_min, ano_max = int(min(anos_disponiveis)), int(max(anos_disponiveis))
 
 PAGINAS = [
     "1. Visão Geral e Evolução",
@@ -291,40 +289,10 @@ with st.sidebar:
     )
 
     st.divider()
-    st.markdown("### 📅 Filtro de Período")
-
-    if "intervalo_anos" not in st.session_state:
-        st.session_state["intervalo_anos"] = (ano_min, ano_max)
-
-    def reset_filters():
-        st.session_state["intervalo_anos"] = (ano_min, ano_max)
-
-    intervalo_anos = st.slider(
-        "Anos considerados:",
-        min_value=ano_min,
-        max_value=ano_max,
-        step=1,
-        key="intervalo_anos",
-    )
-    start_year, end_year = intervalo_anos
-
-    st.button("🔄 Resetar (2007–2024)", on_click=reset_filters, width="stretch")
-
-    st.divider()
     st.caption(
-        "**IX SIEPE — UNICENTRO (2026)**\n\n"
+        "**Parceria Agrária × Unicentro × Big Data**\n\n"
         "Fontes: DERAL/PR · CEPEA/ESALQ · IPCA/IBGE · BCB · USDA/ERS (CBOT)"
     )
-
-
-def filtrar_df(df: pd.DataFrame, col_ano="ano") -> pd.DataFrame:
-    out = df.copy()
-    if col_ano and col_ano in out.columns:
-        out = out[(out[col_ano] >= start_year) & (out[col_ano] <= end_year)]
-    elif "data" in out.columns:
-        anos = pd.to_datetime(out["data"]).dt.year
-        out = out[(anos >= start_year) & (anos <= end_year)]
-    return out
 
 
 # ==============================================================================
@@ -345,8 +313,8 @@ st.markdown(
 # PÁGINA 1: VISÃO GERAL E EVOLUÇÃO (SÉRIE MENSAL REAL vs. DÓLAR E CBOT)
 # ==============================================================================
 if pagina_atual == "1. Visão Geral e Evolução":
-    df_s_filt = filtrar_df(df_serie).sort_values("data")
-    df_soja_m = filtrar_df(DATA["soja_mercado_mensal"]).sort_values("data")
+    df_s_filt = df_serie.sort_values("data")
+    df_soja_m = DATA["soja_mercado_mensal"].sort_values("data")
     vals = df_s_filt["preco_real_dez_2024"].dropna()
     first_row = df_s_filt.iloc[0]
     last_row = df_s_filt.iloc[-1]
@@ -527,7 +495,7 @@ elif pagina_atual == "2. Modelagem Preditiva (2022–2024)":
 st.markdown(
     """
     <div class="footer-box">
-        <strong>IX SIEPE — Semana de Integração Ensino, Pesquisa e Extensão (UNICENTRO, 2026)</strong> •
+        <strong>Parceria Agrária × Unicentro × Big Data</strong> •
         Fontes: DERAL/SEAB-PR · CEPEA/ESALQ · IPCA/IBGE · Banco Central do Brasil (BCB) · USDA/ERS (CBOT)
     </div>
     """,
