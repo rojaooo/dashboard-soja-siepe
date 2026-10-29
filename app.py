@@ -104,13 +104,29 @@ st.markdown(
         background-color: #f8fafc;
         border-right: 1px solid #e2e8f0;
     }
-    /* Oculta barra superior do GitHub, rodapé padrão e badges de criador do Streamlit */
+    /* Oculta menu superior do GitHub, rodapé padrão e badges de criador do Streamlit, mantendo o botão da barra lateral visível */
     #MainMenu {visibility: hidden !important;}
     footer {visibility: hidden !important; display: none !important;}
-    [data-testid="stToolbar"] {visibility: hidden !important; display: none !important;}
+    [data-testid="stToolbarActions"] {visibility: hidden !important; display: none !important;}
+    [data-testid="stAppDeployButton"] {visibility: hidden !important; display: none !important;}
     [data-testid="stDecoration"] {visibility: hidden !important; display: none !important;}
     [data-testid="stStatusWidget"] {visibility: hidden !important; display: none !important;}
     [data-testid="manage-app-button"] {visibility: hidden !important; display: none !important;}
+    header[data-testid="stHeader"] {
+        background: transparent !important;
+    }
+    [data-testid="stExpandSidebarButton"],
+    [data-testid="stSidebarCollapsedControl"],
+    [data-testid="collapsedControl"] {
+        visibility: visible !important;
+        display: flex !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        background-color: #f0fdf4 !important;
+        border: 1px solid #15803d !important;
+        border-radius: 8px !important;
+        color: #15803d !important;
+    }
     a[href*="streamlit.io/cloud"] {visibility: hidden !important; display: none !important;}
     div[class*=" profileContainer"],
     div[class*="_profileContainer_"],
