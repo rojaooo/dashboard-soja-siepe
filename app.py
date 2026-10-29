@@ -383,7 +383,7 @@ if pagina_atual == "1. Visão Geral e Evolução":
             y=df_soja_m["cbot_brl_60kg_sem_premio"],
             mode="lines",
             name="Cotação CBOT Convertida (R$/60 kg)",
-            line=dict(color=COLORS["CBOT"], width=2.5, dash="dash"),
+            line=dict(color=COLORS["CBOT"], width=2.5),
         )
     )
     fig.add_trace(
