@@ -12,7 +12,7 @@ st.set_page_config(
     page_title="Monitor de Preços da Soja no Paraná (2007–2024)",
     page_icon="🌱",
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="auto",
 )
 
 # Paleta de cores de alto contraste para fundo branco (Apresentação)
@@ -99,6 +99,34 @@ st.markdown(
         border-top: 1px solid #e2e8f0;
         margin-top: 36px;
     }
+    .chart-title {
+        font-size: 1.18rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin: 6px 0 2px 0;
+        line-height: 1.35;
+    }
+    .highlight-banner {
+        background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+        border: 2px solid #15803d;
+        border-left: 8px solid #15803d;
+        border-radius: 12px;
+        padding: 18px 24px;
+        margin-bottom: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+    .highlight-badge {
+        background: #15803d;
+        color: #ffffff;
+        padding: 10px 20px;
+        border-radius: 10px;
+        text-align: center;
+        min-width: 240px;
+    }
     /* Deixa os botões de navegação lateral mais destacados */
     section[data-testid="stSidebar"] {
         background-color: #f8fafc;
@@ -141,6 +169,103 @@ st.markdown(
         visibility: hidden !important;
         opacity: 0 !important;
         pointer-events: none !important;
+    }
+
+    /* ==========================================================================
+       RESPONSIVIDADE PARA CELULAR (DEITADO / LANDSCAPE E EM PÉ / PORTRAIT)
+       ========================================================================== */
+    @media (max-width: 960px) {
+        .block-container {
+            padding-top: 2.2rem !important;
+            padding-left: 0.85rem !important;
+            padding-right: 0.85rem !important;
+            padding-bottom: 1.2rem !important;
+            max-width: 100% !important;
+        }
+        .main-header {
+            padding: 12px 16px;
+            margin-bottom: 12px;
+            border-radius: 10px;
+        }
+        .main-header h1 {
+            font-size: 1.18rem !important;
+            line-height: 1.25;
+        }
+        .main-header p {
+            font-size: 0.8rem !important;
+        }
+        /* Grid 2x2 para os 4 cards de KPI no celular (em pé ou deitado) */
+        div[data-testid="stHorizontalBlock"] {
+            flex-wrap: wrap !important;
+            gap: 0.55rem !important;
+        }
+        div[data-testid="stHorizontalBlock"] > div[data-testid="column"],
+        div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"] {
+            flex: 1 1 calc(50% - 0.55rem) !important;
+            min-width: calc(50% - 0.55rem) !important;
+            width: calc(50% - 0.55rem) !important;
+        }
+        .kpi-card {
+            padding: 10px 12px;
+            border-radius: 9px;
+        }
+        .kpi-label {
+            font-size: 0.68rem;
+            line-height: 1.2;
+        }
+        .kpi-value {
+            font-size: 1.12rem;
+            line-height: 1.2;
+        }
+        .kpi-sub {
+            font-size: 0.72rem;
+            line-height: 1.2;
+        }
+        .chart-title {
+            font-size: 0.98rem;
+            margin: 4px 0 2px 0;
+        }
+        .highlight-banner {
+            padding: 12px 14px;
+            margin-bottom: 12px;
+        }
+        .highlight-badge {
+            min-width: 100%;
+            padding: 8px 14px;
+        }
+        /* Ajusta fontes internas do Plotly em telas menores para não cortar eixos nem legenda */
+        .js-plotly-plot .plotly .xtick text,
+        .js-plotly-plot .plotly .ytick text,
+        .js-plotly-plot .plotly .y2tick text {
+            font-size: 10px !important;
+        }
+        .js-plotly-plot .plotly .g-xtitle text,
+        .js-plotly-plot .plotly .g-ytitle text,
+        .js-plotly-plot .plotly .g-y2title text {
+            font-size: 11px !important;
+        }
+        .js-plotly-plot .plotly .legend text {
+            font-size: 10.5px !important;
+        }
+        .js-plotly-plot .plotly .annotation-text {
+            font-size: 10px !important;
+        }
+        .js-plotly-plot .plotly .modebar {
+            display: none !important;
+        }
+    }
+
+    /* Ajuste fino extra para celular deitado (altura reduzida) */
+    @media (max-width: 960px) and (orientation: landscape) {
+        div[data-testid="stHorizontalBlock"] > div[data-testid="column"],
+        div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"] {
+            flex: 1 1 calc(25% - 0.55rem) !important;
+            min-width: calc(25% - 0.55rem) !important;
+            width: calc(25% - 0.55rem) !important;
+        }
+        .kpi-value {
+            font-size: 1.0rem;
+        }
     }
     </style>
     """,
@@ -218,25 +343,22 @@ def render_note(html_text: str):
 
 def apply_plotly_style(fig: go.Figure, height: int = 600) -> go.Figure:
     """Estiliza todos os gráficos com fundo branco limpo, sem sobreposição de título/legenda/eixos."""
+    title_text = fig.layout.title.text if fig.layout.title and fig.layout.title.text else ""
+    if title_text:
+        st.markdown(f'<div class="chart-title">{title_text}</div>', unsafe_allow_html=True)
+
     fig.update_layout(
         template="plotly_white",
         paper_bgcolor="#ffffff",
         plot_bgcolor="#ffffff",
         font=dict(color="#0f172a", size=14),
-        title=dict(
-            font=dict(color="#0f172a", size=19, weight="bold"),
-            x=0.0,
-            xanchor="left",
-            y=0.96,
-            yanchor="top",
-            pad=dict(b=15),
-        ),
+        title=dict(text=""),
         height=height,
-        margin=dict(t=85, l=85, r=85, b=95),
+        margin=dict(t=24, l=15, r=15, b=100),
         legend=dict(
             orientation="h",
             yanchor="top",
-            y=-0.15,
+            y=-0.20,
             xanchor="center",
             x=0.5,
             font=dict(size=13, color="#0f172a"),
@@ -434,7 +556,7 @@ elif pagina_atual == "2. Modelagem Preditiva (2022–2024)":
     # Caixa em destaque com o ganho de acurácia do modelo sobre o baseline
     st.markdown(
         """
-        <div style="background: linear-gradient(135deg, #f0fdf4, #dcfce7); border: 2px solid #15803d; border-left: 8px solid #15803d; border-radius: 12px; padding: 18px 24px; margin-bottom: 18px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+        <div class="highlight-banner">
             <div>
                 <div style="font-size: 0.85rem; font-weight: 800; text-transform: uppercase; color: #166534; letter-spacing: 0.05em;">
                     🎯 Destaque do Modelo Direcional (Regressão Logística — Teste 2022–2024)
@@ -443,7 +565,7 @@ elif pagina_atual == "2. Modelagem Preditiva (2022–2024)":
                     O modelo alcançou <strong>69,44% de acurácia</strong> (25/36 meses) frente a <strong>41,67% do baseline majoritário</strong> (corte validado = 0,67).
                 </div>
             </div>
-            <div style="background: #15803d; color: #ffffff; padding: 10px 20px; border-radius: 10px; text-align: center; min-width: 240px;">
+            <div class="highlight-badge">
                 <div style="font-size: 0.76rem; text-transform: uppercase; font-weight: 700; color: #dcfce7;">Ganho sobre o Baseline</div>
                 <div style="font-size: 1.65rem; font-weight: 900; line-height: 1.2;">+27,78 p.p.</div>
             </div>
@@ -471,11 +593,12 @@ elif pagina_atual == "2. Modelagem Preditiva (2022–2024)":
             marker_color=cores_barras,
             text=[fmt_pct(v) for v in metricas_vals],
             textposition="outside",
+            cliponaxis=False,
         )
     )
     fig_b.update_layout(
         title="Métricas do Modelo Direcional vs. Baseline (Teste 2022–2024)",
-        yaxis=dict(title="Percentual (%)", range=[0, 100]),
+        yaxis=dict(title="Percentual (%)", range=[0, 108]),
         xaxis_title="Métrica",
     )
     st.plotly_chart(apply_plotly_style(fig_b, height=540), width="stretch")
