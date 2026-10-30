@@ -319,23 +319,32 @@ if pagina_atual == "1. Visão Geral e Evolução":
     first_row = df_s_filt.iloc[0]
     last_row = df_s_filt.iloc[-1]
     media_real = vals.mean()
+    media_pre = df_s_filt[df_s_filt["ano"] <= 2019]["preco_real_dez_2024"].mean()
     min_real = vals.min()
     max_real = vals.max()
-    cv_real = (vals.std(ddof=1) / media_real * 100) if len(vals) > 1 and media_real else 0.0
     var_total = ((last_row["preco_real_dez_2024"] / first_row["preco_real_dez_2024"]) - 1) * 100
 
     c1, c2, c3, c4 = st.columns(4)
     with c1:
         render_kpi("Preço Médio Real", fmt_brl(media_real), f"Base IPCA dez/2024 ({len(df_s_filt)} meses)")
     with c2:
-        render_kpi("Mínimo e Máximo Real", f"{fmt_brl(min_real)} – {fmt_brl(max_real)}", "Pico histórico em mar/2022")
+        render_kpi("Média Pré-Pandemia (2007–19)", fmt_brl(media_pre), "Patamar estrutural antes do choque (156 meses)")
     with c3:
-        render_kpi("Fechamento (Dez/2024)", fmt_brl(last_row["preco_real_dez_2024"]), f"Acumulado: {fmt_pct(var_total)}")
+        render_kpi("Mínimo e Máximo Real", f"{fmt_brl(min_real)} – {fmt_brl(max_real)}", "Pico histórico em mar/2022")
     with c4:
-        render_kpi("Volatilidade (CV)", fmt_pct(cv_real), f"Dólar Dez/2024: {fmt_brl(last_row['dolar_medio_mensal'], 2)}")
+        render_kpi("Fechamento (Dez/2024)", fmt_brl(last_row["preco_real_dez_2024"]), f"Acumulado: {fmt_pct(var_total)}")
 
     st.write("")
     fig = go.Figure()
+    fig.add_vrect(
+        x0="2020-01-01",
+        x1="2022-12-01",
+        fillcolor="rgba(220, 38, 38, 0.12)",
+        line_width=0,
+        annotation_text="Choque Pandemia (2020–2022)",
+        annotation_position="top left",
+        annotation_font=dict(color="#991b1b", size=13, weight="bold"),
+    )
     fig.add_trace(
         go.Scatter(
             x=df_s_filt["data"],
@@ -422,71 +431,54 @@ elif pagina_atual == "2. Modelagem Preditiva (2022–2024)":
 
     st.divider()
 
-    # Caixinhas do 2º Modelo (Modelo Direcional Logístico)
-    d1, d2, d3, d4, d5 = st.columns(5)
-    with d1:
-        render_kpi("Acurácia Direcional", "69,44%", "Ganho de +27,78 p.p. s/ baseline")
-    with d2:
-        render_kpi("Baseline Majoritário", "41,67%", "Corte validado (2019–2021) = 0,67")
-    with d3:
-        render_kpi("Acurácia Balanceada", "66,19%", "Média entre sensib. e especif.")
-    with d4:
-        render_kpi("Especificidade (Não Alta)", "85,71%", "Acerto nos meses sem alta")
-    with d5:
-        render_kpi("Sensibilidade (Alta)", "46,67%", "Acerto nos meses de alta")
+    # Caixa em destaque com o ganho de acurácia do modelo sobre o baseline
+    st.markdown(
+        """
+        <div style="background: linear-gradient(135deg, #f0fdf4, #dcfce7); border: 2px solid #15803d; border-left: 8px solid #15803d; border-radius: 12px; padding: 18px 24px; margin-bottom: 18px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+            <div>
+                <div style="font-size: 0.85rem; font-weight: 800; text-transform: uppercase; color: #166534; letter-spacing: 0.05em;">
+                    🎯 Destaque do Modelo Direcional (Regressão Logística — Teste 2022–2024)
+                </div>
+                <div style="font-size: 1.05rem; color: #0f172a; margin-top: 4px;">
+                    O modelo alcançou <strong>69,44% de acurácia</strong> (25/36 meses) frente a <strong>41,67% do baseline majoritário</strong> (corte validado = 0,67).
+                </div>
+            </div>
+            <div style="background: #15803d; color: #ffffff; padding: 10px 20px; border-radius: 10px; text-align: center; min-width: 240px;">
+                <div style="font-size: 0.76rem; text-transform: uppercase; font-weight: 700; color: #dcfce7;">Ganho sobre o Baseline</div>
+                <div style="font-size: 1.65rem; font-weight: 900; line-height: 1.2;">+27,78 p.p.</div>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
-    st.write("")
+    # 2. Gráfico do Modelo Direcional cobrindo a página toda
+    metricas_nomes = [
+        "Baseline (Classe Majoritária)",
+        "Acurácia do Modelo",
+        "Acurácia Balanceada",
+        "Especificidade (Não Alta)",
+        "Sensibilidade (Alta)",
+    ]
+    metricas_vals = [41.67, 69.44, 66.19, 85.71, 46.67]
+    cores_barras = ["#94a3b8", "#15803d", "#0d9488", "#1d4ed8", "#d97706"]
 
-    # 2. Desempenho Direcional vs. Baseline e Matriz de Confusão
-    col_m1, col_m2 = st.columns([1.25, 1])
-    with col_m1:
-        metricas_nomes = [
-            "Baseline (Classe Majoritária)",
-            "Acurácia do Modelo",
-            "Acurácia Balanceada",
-            "Especificidade (Não Alta)",
-            "Sensibilidade (Alta)",
-        ]
-        metricas_vals = [41.67, 69.44, 66.19, 85.71, 46.67]
-        cores_barras = ["#94a3b8", "#15803d", "#0d9488", "#1d4ed8", "#d97706"]
-
-        fig_b = go.Figure()
-        fig_b.add_trace(
-            go.Bar(
-                x=metricas_nomes,
-                y=metricas_vals,
-                marker_color=cores_barras,
-                text=[fmt_pct(v) for v in metricas_vals],
-                textposition="outside",
-            )
+    fig_b = go.Figure()
+    fig_b.add_trace(
+        go.Bar(
+            x=metricas_nomes,
+            y=metricas_vals,
+            marker_color=cores_barras,
+            text=[fmt_pct(v) for v in metricas_vals],
+            textposition="outside",
         )
-        fig_b.update_layout(
-            title="Métricas do Modelo Direcional vs. Baseline (Teste 2022–2024)",
-            yaxis=dict(title="Percentual (%)", range=[0, 100]),
-            xaxis_title="Métrica",
-        )
-        st.plotly_chart(apply_plotly_style(fig_b, height=540), width="stretch")
-
-    with col_m2:
-        df_smc = DATA["soja_matriz_conf"]
-        pivot_mc = df_smc.pivot(index="observado", columns="previsto", values="quantidade").fillna(0)
-        fig_mc = px.imshow(
-            pivot_mc,
-            text_auto=True,
-            color_continuous_scale="Greens",
-            labels=dict(x="Previsto pelo Modelo", y="Observado no DERAL", color="Meses"),
-            title="Matriz de Confusão (2022–2024, n = 36 meses)",
-        )
-        fig_mc.update_traces(textfont=dict(size=20))
-        fig_mc.update_layout(
-            template="plotly_white",
-            paper_bgcolor="#ffffff",
-            plot_bgcolor="#ffffff",
-            font=dict(color="#0f172a", size=14),
-            height=540,
-            margin=dict(t=60, l=50, r=40, b=50),
-        )
-        st.plotly_chart(fig_mc, width="stretch")
+    )
+    fig_b.update_layout(
+        title="Métricas do Modelo Direcional vs. Baseline (Teste 2022–2024)",
+        yaxis=dict(title="Percentual (%)", range=[0, 100]),
+        xaxis_title="Métrica",
+    )
+    st.plotly_chart(apply_plotly_style(fig_b, height=540), width="stretch")
 
 
 # ==============================================================================
